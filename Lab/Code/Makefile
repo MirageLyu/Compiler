@@ -40,7 +40,7 @@ syntax-c: $(YFILE)
 .PHONY: clean test
 scan:
 	@for file in $(shell find ../Test -name "*.cmm");\
-	do echo "Scanning $$file"; ./scanner $$file; echo "\n"; done
+	do echo "Scanning $$file\n"; ./scanner $$file; echo "\n"; done
 test:
 	@for file in $(shell find ../Test -name "*.cmm");\
 	do echo "Parsing $$file"; ./parser $$file; echo "\n"; done

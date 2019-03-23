@@ -4,6 +4,9 @@ SLCOMMENT	\/\/[^\n]*[\n]
 LCOMMENT	\/\*
 RCOMMENT	\*\/
 MLCOMMENT	{LCOMMENT}[^*]*\*+([^*/][^*]*\*+)*\/
+UNCLOSED_MLCOMMENT1	{LCOMMENT}[^*]*
+UNCLOSED_MLCOMMENT2	{LCOMMENT}[^*]*\*+([^*/][^*]*\*+)*([^*/][^*]*)
+UNCLOSED_MLCOMMENT	{UNCLOSED_MLCOMMENT1}|{UNCLOSED_MLCOMMENT2}
 
 SEMI		;
 COMMA		,
@@ -132,6 +135,9 @@ ID			{LETTER}({LETTER}|{DIGIT})*
 }
 {ID}		{
 	printf("ID(%s) ", yytext);
+}
+{UNCLOSED_MLCOMMENT}	{
+	printf("Unterminated Comment!!\n");
 }
 .			{
 	printf("\nUnknown Character: %s\n", yytext);
