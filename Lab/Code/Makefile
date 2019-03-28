@@ -5,7 +5,7 @@
 CXX = g++
 FLEX = flex
 BISON = bison
-CFLAGS = -std=c++11
+CPPFLAGS = -w -std=c++11
 
 # 编译目标：src目录下的所有.c文件
 CFILES = $(shell find ./ -name "*.cpp")
@@ -18,11 +18,11 @@ LFO = $(LFC:.c=.o)
 YFO = $(YFC:.c=.o)
 
 parser: syntax $(filter-out $(LFO),$(OBJS))
-	$(CXX) $(CFLAGS) -o parser $(YFO) $(filter-out $(LFO),$(OBJS)) -ll -ly
+	$(CXX) $(CPPFLAGS) -o parser $(YFO) $(filter-out $(LFO),$(OBJS)) -ll -ly
 	cp parser ../parser
 
 syntax: lexical syntax-c
-	$(CXX) $(CFLAGS) -c $(YFC) -o $(YFO)
+	$(CXX) $(CPPFLAGS) -c $(YFC) -o $(YFO)
 
 scanner: lexical
 	$(CXX) $(CFLAGS) main.cpp lex.yy.c -ll -o scanner
@@ -31,8 +31,7 @@ lexical: $(LFILE)
 	$(FLEX) -o $(LFC) $(LFILE)
 
 syntax-c: $(YFILE)
-	$(BISON) -o $(YFC) -d -v $(YFILE)
-	#-t debug
+	$(BISON) -o $(YFC) -d -v -t $(YFILE)
 
 -include $(patsubst %.o, %.d, $(OBJS))
 

@@ -1,22 +1,29 @@
-#include<iostream>
-#include<cstdio>
-#include<cstring>
+#include "ast.h"
 
-using namespace std;
-
+extern AstNode* AST;
 extern FILE* yyin;
-extern int yylex();
+extern int yylval;
 
+extern int yylex();
+extern int yyparse();
+extern int yyrestart(FILE *);
+
+bool SYNTAX_ERROR = false;
 
 int main(int argc, char** argv){
-	if(argc > 1){
-		if(!(yyin = fopen(argv[1], "r"))){
-			perror(argv[1]);
-			return 1;
-		}
+	if(argc <= 1)
+		return 1;
+	FILE* f = fopen(argv[1], "r");
+	if(!f){
+		perror(argv[1]);
+		return 1;
 	}
 
-	while(yylex() != 0);
+	yyrestart(f);
+	yyparse();
+
+	if(!SYNTAX_ERROR)
+		AST->printTree(0);	
 
 	return 0;
 }

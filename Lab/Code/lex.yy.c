@@ -521,7 +521,20 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "./lexical.l"
-#line 525 "./lex.yy.c"
+#line 4 "./lexical.l"
+#include "syntax.tab.h"
+#include "headers.h"
+
+extern bool SYNTAX_ERROR;
+static vector<AstNode*> empty_vec;
+
+static void reportLexicalError(string anno){
+	SYNTAX_ERROR = true;
+	printf("\nError type A at Line %d: %s.\n", yylineno, anno.c_str());
+}
+
+#line 537 "./lex.yy.c"
+#line 538 "./lex.yy.c"
 
 #define INITIAL 0
 
@@ -738,9 +751,10 @@ YY_DECL
 		}
 
 	{
-#line 50 "./lexical.l"
+#line 64 "./lexical.l"
 
-#line 744 "./lex.yy.c"
+
+#line 758 "./lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -810,7 +824,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 51 "./lexical.l"
+#line 66 "./lexical.l"
 {
 	/* Do nothing with comment. */
 }
@@ -818,227 +832,263 @@ YY_RULE_SETUP
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 54 "./lexical.l"
+#line 69 "./lexical.l"
 {
 	/* Do nothing with comment. */
 }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 57 "./lexical.l"
-{
-	printf(";\n");
+#line 72 "./lexical.l"
+{ 
+    yylval.type_ast = AstNode::createNewAstNode(ANT_SEMI, yylineno, NONE, NULL, empty_vec);
+	return SEMI;
 }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 60 "./lexical.l"
+#line 76 "./lexical.l"
 {
-	printf(", ");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_COMMA, yylineno, NONE, NULL, empty_vec);
+	return COMMA;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 63 "./lexical.l"
+#line 80 "./lexical.l"
 {
-	printf("= ");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_ASSIGNOP, yylineno, NONE, NULL, empty_vec);
+	return ASSIGNOP;
 }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 66 "./lexical.l"
+#line 84 "./lexical.l"
 {
-	printf("%s ", yytext);
+	yylval.type_ast = AstNode::createNewAstNode(ANT_RELOP, yylineno, NONE, NULL, empty_vec);
+	return RELOP;
 }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 69 "./lexical.l"
+#line 88 "./lexical.l"
 {
-	printf("+ ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_PLUS, yylineno, NONE, NULL, empty_vec);
+	return PLUS;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 72 "./lexical.l"
+#line 92 "./lexical.l"
 {
-	printf("- ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_MINUS, yylineno, NONE, NULL, empty_vec);
+	return MINUS;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 75 "./lexical.l"
+#line 96 "./lexical.l"
 {
-	printf("* " );
+	yylval.type_ast = AstNode::createNewAstNode(ANT_STAR, yylineno, NONE, NULL, empty_vec);
+	return STAR;
 }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 78 "./lexical.l"
+#line 100 "./lexical.l"
 {
-	printf("/ ");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_DIV, yylineno, NONE, NULL, empty_vec);
+	return DIV;
 }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 81 "./lexical.l"
+#line 104 "./lexical.l"
 {
-	printf("&& ");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_AND, yylineno, NONE, NULL, empty_vec);
+	return AND;
 }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 84 "./lexical.l"
+#line 108 "./lexical.l"
 {
-	printf("||");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_OR, yylineno, NONE, NULL, empty_vec);
+	return OR;
 }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 87 "./lexical.l"
+#line 112 "./lexical.l"
 {
-	printf(".");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_DOT, yylineno, NONE, NULL, empty_vec);
+	return DOT;
 }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 90 "./lexical.l"
+#line 116 "./lexical.l"
 {
-	printf("!");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_NOT, yylineno, NONE, NULL, empty_vec);
+	return NOT;
 }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 93 "./lexical.l"
+#line 120 "./lexical.l"
 {
-	printf("%s ", yytext);
+    string sval = string(yytext);
+	yylval.type_ast = AstNode::createNewAstNode(ANT_TYPE, yylineno, SVAL, &sval, empty_vec);
+	return TYPE;
 }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 96 "./lexical.l"
+#line 125 "./lexical.l"
 {
-	printf("(");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_LP, yylineno, NONE, NULL, empty_vec);
+	return LP;
 }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 99 "./lexical.l"
+#line 129 "./lexical.l"
 {
-	printf(")");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_RP, yylineno, NONE, NULL, empty_vec);
+	return RP;
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 102 "./lexical.l"
+#line 133 "./lexical.l"
 {
-	printf("[");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_LB, yylineno, NONE, NULL, empty_vec);
+	return LB;
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 105 "./lexical.l"
+#line 137 "./lexical.l"
 {
-	printf("]");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_RB, yylineno, NONE, NULL, empty_vec);
+	return RB;
 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 108 "./lexical.l"
+#line 141 "./lexical.l"
 {
-	printf("{");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_LC, yylineno, NONE, NULL, empty_vec);
+	return LC;
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 111 "./lexical.l"
+#line 145 "./lexical.l"
 {
-	printf("}");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_RC, yylineno, NONE, NULL, empty_vec);
+	return RC;
 }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 114 "./lexical.l"
+#line 149 "./lexical.l"
 {
-	printf("struct ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_STRUCT, yylineno, NONE, NULL, empty_vec);
+	return STRUCT;
 }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 117 "./lexical.l"
+#line 153 "./lexical.l"
 {
-	printf("return ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_RETURN, yylineno, NONE, NULL, empty_vec);
+	return RETURN;
 }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 120 "./lexical.l"
+#line 157 "./lexical.l"
 {
-	printf("if ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_IF, yylineno, NONE, NULL, empty_vec);
+	return IF;
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 123 "./lexical.l"
+#line 161 "./lexical.l"
 {
-	printf("else\n");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_ELSE, yylineno, NONE, NULL, empty_vec);
+	return ELSE;
 }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 126 "./lexical.l"
+#line 165 "./lexical.l"
 {
-	printf("while ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_WHILE, yylineno, NONE, NULL, empty_vec);
+	return WHILE;
 }
 	YY_BREAK
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 129 "./lexical.l"
+#line 169 "./lexical.l"
 { /* Do nothing. */ }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 130 "./lexical.l"
+#line 170 "./lexical.l"
 {
-	printf("Integer(%s) ", yytext);
+	int ival = 0;
+    sscanf(yytext, "%d", &ival);
+    yylval.type_ast = AstNode::createNewAstNode(ANT_INT, yylineno, IVAL, &ival, empty_vec);
+	return INT;
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 133 "./lexical.l"
+#line 176 "./lexical.l"
 {
-	printf("Float(%s) ", yytext);
+    float fval = 0;
+    sscanf(yytext, "%f", &fval);
+    yylval.type_ast = AstNode::createNewAstNode(ANT_FLOAT, yylineno, FVAL, &fval, empty_vec);
+	return FLOAT;
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 136 "./lexical.l"
+#line 182 "./lexical.l"
 {
-	printf("ID(%s) ", yytext);
+	string sval = string(yytext);
+    yylval.type_ast = AstNode::createNewAstNode(ANT_ID, yylineno, SVAL, &sval, empty_vec);
+	return ID;
 }
 	YY_BREAK
 case 31:
 /* rule 31 can match eol */
 YY_RULE_SETUP
-#line 139 "./lexical.l"
+#line 187 "./lexical.l"
 {
-	printf("Unterminated Comment!!\n");
+	reportLexicalError("Unterminated Annotation");
 }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 142 "./lexical.l"
+#line 190 "./lexical.l"
 {
-	printf("\nUnknown Character: %s\n", yytext);
+	string str = "Mysterious character \"";
+	str.append(yytext);
+	str.append("\"");
+	reportLexicalError(str);
 }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 146 "./lexical.l"
+#line 197 "./lexical.l"
 ECHO;
 	YY_BREAK
-#line 1042 "./lex.yy.c"
+#line 1092 "./lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2055,5 +2105,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 146 "./lexical.l"
+#line 197 "./lexical.l"
+
+
 

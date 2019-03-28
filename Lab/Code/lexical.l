@@ -1,5 +1,19 @@
 %option yylineno
 
+%{
+#include "syntax.tab.h"
+#include "headers.h"
+
+extern bool SYNTAX_ERROR;
+static vector<AstNode*> empty_vec;
+
+static void reportLexicalError(string anno){
+	SYNTAX_ERROR = true;
+	printf("\nError type A at Line %d: %s.\n", yylineno, anno.c_str());
+}
+
+%}
+
 SLCOMMENT	\/\/[^\n]*[\n]
 LCOMMENT	\/\*
 RCOMMENT	\*\/
@@ -48,99 +62,137 @@ ID			{LETTER}({LETTER}|{DIGIT})*
 
 
 %%
+
 {SLCOMMENT}	{
 	/* Do nothing with comment. */
 }
 {MLCOMMENT}	{
 	/* Do nothing with comment. */
 }
-{SEMI}		{
-	printf(";\n");
+{SEMI}		{ 
+    yylval.type_ast = AstNode::createNewAstNode(ANT_SEMI, yylineno, NONE, NULL, empty_vec);
+	return SEMI;
 }
 {COMMA}		{
-	printf(", ");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_COMMA, yylineno, NONE, NULL, empty_vec);
+	return COMMA;
 }
 {ASSIGNOP}	{
-	printf("= ");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_ASSIGNOP, yylineno, NONE, NULL, empty_vec);
+	return ASSIGNOP;
 }
 {RELOP}		{
-	printf("%s ", yytext);
+	yylval.type_ast = AstNode::createNewAstNode(ANT_RELOP, yylineno, NONE, NULL, empty_vec);
+	return RELOP;
 }
 {PLUS}		{
-	printf("+ ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_PLUS, yylineno, NONE, NULL, empty_vec);
+	return PLUS;
 }
 {MINUS}		{
-	printf("- ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_MINUS, yylineno, NONE, NULL, empty_vec);
+	return MINUS;
 }
 {STAR}		{
-	printf("* " );
+	yylval.type_ast = AstNode::createNewAstNode(ANT_STAR, yylineno, NONE, NULL, empty_vec);
+	return STAR;
 }
 {DIV}		{
-	printf("/ ");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_DIV, yylineno, NONE, NULL, empty_vec);
+	return DIV;
 }
 {AND}		{
-	printf("&& ");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_AND, yylineno, NONE, NULL, empty_vec);
+	return AND;
 }
 {OR}		{
-	printf("||");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_OR, yylineno, NONE, NULL, empty_vec);
+	return OR;
 }
 {DOT}		{
-	printf(".");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_DOT, yylineno, NONE, NULL, empty_vec);
+	return DOT;
 }
 {NOT}		{
-	printf("!");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_NOT, yylineno, NONE, NULL, empty_vec);
+	return NOT;
 }
 {TYPE}		{
-	printf("%s ", yytext);
+    string sval = string(yytext);
+	yylval.type_ast = AstNode::createNewAstNode(ANT_TYPE, yylineno, SVAL, &sval, empty_vec);
+	return TYPE;
 }
 {LP}		{
-	printf("(");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_LP, yylineno, NONE, NULL, empty_vec);
+	return LP;
 }
 {RP}		{
-	printf(")");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_RP, yylineno, NONE, NULL, empty_vec);
+	return RP;
 }
 {LB}		{
-	printf("[");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_LB, yylineno, NONE, NULL, empty_vec);
+	return LB;
 }
 {RB}		{
-	printf("]");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_RB, yylineno, NONE, NULL, empty_vec);
+	return RB;
 }
 {LC}		{
-	printf("{");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_LC, yylineno, NONE, NULL, empty_vec);
+	return LC;
 }
 {RC}		{
-	printf("}");
+    yylval.type_ast = AstNode::createNewAstNode(ANT_RC, yylineno, NONE, NULL, empty_vec);
+	return RC;
 }
 {STRUCT}	{
-	printf("struct ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_STRUCT, yylineno, NONE, NULL, empty_vec);
+	return STRUCT;
 }
 {RETURN}	{
-	printf("return ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_RETURN, yylineno, NONE, NULL, empty_vec);
+	return RETURN;
 }
 {IF}		{
-	printf("if ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_IF, yylineno, NONE, NULL, empty_vec);
+	return IF;
 }
 {ELSE}		{
-	printf("else\n");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_ELSE, yylineno, NONE, NULL, empty_vec);
+	return ELSE;
 }
 {WHILE}		{
-	printf("while ");
+	yylval.type_ast = AstNode::createNewAstNode(ANT_WHILE, yylineno, NONE, NULL, empty_vec);
+	return WHILE;
 }
 {WS}		{ /* Do nothing. */ }
 {INT}		{
-	printf("Integer(%s) ", yytext);
+	int ival = 0;
+    sscanf(yytext, "%d", &ival);
+    yylval.type_ast = AstNode::createNewAstNode(ANT_INT, yylineno, IVAL, &ival, empty_vec);
+	return INT;
 }
 {FLOAT}		{
-	printf("Float(%s) ", yytext);
+    float fval = 0;
+    sscanf(yytext, "%f", &fval);
+    yylval.type_ast = AstNode::createNewAstNode(ANT_FLOAT, yylineno, FVAL, &fval, empty_vec);
+	return FLOAT;
 }
 {ID}		{
-	printf("ID(%s) ", yytext);
+	string sval = string(yytext);
+    yylval.type_ast = AstNode::createNewAstNode(ANT_ID, yylineno, SVAL, &sval, empty_vec);
+	return ID;
 }
 {UNCLOSED_MLCOMMENT}	{
-	printf("Unterminated Comment!!\n");
+	reportLexicalError("Unterminated Annotation");
 }
 .			{
-	printf("\nUnknown Character: %s\n", yytext);
+	string str = "Mysterious character \"";
+	str.append(yytext);
+	str.append("\"");
+	reportLexicalError(str);
 }
 
 %%
+
