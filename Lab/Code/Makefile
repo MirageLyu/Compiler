@@ -24,9 +24,6 @@ parser: syntax $(filter-out $(LFO),$(OBJS))
 syntax: lexical syntax-c
 	$(CXX) $(CPPFLAGS) -c $(YFC) -o $(YFO)
 
-scanner: lexical
-	$(CXX) $(CFLAGS) main.cpp lex.yy.c -ll -o scanner
-
 lexical: $(LFILE)
 	$(FLEX) -o $(LFC) $(LFILE)
 
@@ -37,9 +34,9 @@ syntax-c: $(YFILE)
 
 # 定义的一些伪目标
 .PHONY: clean test
-scan:
-	@for file in $(shell find ../Test -name "*.cmm");\
-	do echo "Scanning $$file\n"; ./scanner $$file; echo "\n"; done
+#scan:
+#	@for file in $(shell find ../Test -name "*.cmm");\
+#	do echo "Scanning $$file\n"; ./scanner $$file; echo "\n"; done
 test:
 	@for file in $(shell find ../Test -name "*.cmm");\
 	do echo "Parsing $$file"; ./parser $$file; echo "\n"; done
