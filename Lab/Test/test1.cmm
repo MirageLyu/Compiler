@@ -1,9 +1,5 @@
-int main()
+int func_A1()
 {
-	int i = 1;
-	int j = 2;
-} ~ 
-/*
-
-
-
+	int _3_test;
+	float 6_wrong;
+}

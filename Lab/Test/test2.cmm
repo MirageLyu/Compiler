@@ -1,6 +1,9 @@
-int main(){
-	float a[10][2];
-	int i;
-	a[5][1] = 0.8765;
-	if(a[1][2] == 0) i = 1; else i = 0; 
+int sub()
+{
+	int a, b,c;
+	c = 2;
+	a = b / c + 3 * a + 12;
+	b = !a && 4 >= 4 || a != 6;
+	c = a % b;
+	return b;
 }

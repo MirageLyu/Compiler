@@ -185,12 +185,12 @@ ID			{LETTER}({LETTER}|{DIGIT})*
 	return ID;
 }
 {UNCLOSED_MLCOMMENT}	{
-	reportLexicalError("Unterminated Annotation");
+	reportLexicalError("Unterminated Comment");
 }
 .			{
-	string str = "Mysterious character \"";
+	string str = "Mysterious character \'";
 	str.append(yytext);
-	str.append("\"");
+	str.append("\'");
 	reportLexicalError(str);
 }
 

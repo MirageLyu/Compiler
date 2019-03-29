@@ -44,7 +44,7 @@ test:
 	@for file in $(shell find ../Test -name "*.cmm");\
 	do echo "Parsing $$file"; ./parser $$file; echo "\n"; done
 clean:
-	rm -f parser scanner lex.yy.c syntax.tab.c syntax.tab.h syntax.output
+	rm -f parser scanner lex.yy.c syntax.tab.c syntax.tab.h syntax.output syntax.tab.o
 	rm -f $(OBJS) $(OBJS:.o=.d)
 	rm -f $(LFC) $(YFC) $(YFC:.c=.h)
 	rm -f *~

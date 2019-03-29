@@ -49,12 +49,12 @@ void AstNode::printTree(int depth){
 void AstNode::reportSyntaxError(AstNode* ast, int lineno){
     string msg;
     if(ast->ert == MISSING){
-        msg.append("Missing character: \"");
+        msg.append("Missing character: \'");
         msg.append(ast->sval);
-        msg.append("\".");
+        msg.append("\'.");
     }
-    else if(ast->ert == SYNERR){
-        msg.append("Syntax Error.");
+    else {
+        msg.append("syntax error");
     }
     printf("\nError type B at Line %d: %s.\n", lineno, msg.c_str());
 }
