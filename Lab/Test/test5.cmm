@@ -1,6 +1,5 @@
-int array (int a, int b)
+int main()
 {
-    int a1, b1[3], c[-3];
-    b1[a1] = b;
-    b1[1] = a + b1[a];
+    int i;
+    i = 3.7;
 }

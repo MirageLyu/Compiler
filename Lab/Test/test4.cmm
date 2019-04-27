@@ -1,6 +1,14 @@
-int main(){
-    int a;
-    a = a + 1;
-    a = a - 2;
-    return a
+int func(int i)
+{
+    return i;
+}
+
+int func()
+{
+    return 0;
+}
+
+int main()
+{
+
 }

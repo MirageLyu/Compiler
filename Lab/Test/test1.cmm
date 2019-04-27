@@ -1,5 +1,5 @@
-int func_A1()
+int main()
 {
-	int _3_test;
-	float 6_wrong;
+    int i = 0;
+    j = i + 1;
 }

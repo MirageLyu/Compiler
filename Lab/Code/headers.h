@@ -7,6 +7,7 @@
 #include <vector>
 #include <algorithm>
 #include <iomanip>
+#include <map>
 #include <cstdio>
 
 using namespace std;
