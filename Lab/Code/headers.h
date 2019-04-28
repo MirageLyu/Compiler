@@ -10,4 +10,6 @@
 #include <map>
 #include <cstdio>
 
+#include "reportError.h"
+
 using namespace std;

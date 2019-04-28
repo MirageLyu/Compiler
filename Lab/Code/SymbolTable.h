@@ -46,16 +46,42 @@ private:
     int lineno;
 public:
     Symbol() = default;
+    Symbol(const Symbol &symbol) = default;
+    ~Symbol() = default;
+
+    //TODO: Initialize from Ast
+
+    Symbol& operator=(const Symbol& symbol) = default;
     
     string getName() const { return name; }
     Type getType() const { return type; }
     int getlineno() const { return lineno; }
+
+    bool operator==(const Symbol& symbol) { return type == symbol.type; }
 };
 
 class SymbolTable{
 private:
+    //symbols: all variables, func args, struct fields.
     map<string, Symbol> symbols;
-    map<string, Function> functions;
+    map<string, Function> functions_def;
+    map<string, Function> functions_dec;
+    map<string, Type> struct_types;
 public:
-    
+    Symbol* getSymbol(const string &name) const ;
+    Function* getFuncDefinition(const string &name) const;
+    Function* getFuncDeclaration(const string &name) const;
+    Type* getStructType(const string &name) const;
+
+    bool hasSymbolName(const string &name) const { return getSymbol(name) != NULL; }
+    bool hasFuncDeclaration(const string &name) const { return getFuncDeclaration(name) != NULL; };
+    bool hasFuncDefinition(const string &name) const { return getFuncDefinition(name) != NULL; }
+    bool hasStructType(const string &name) const { return getStructType(name) != NULL; }
+
+    void addSymbol(const Symbol &symbol);
+    void addFuncDeclaration(const Function& func);
+    void addFuncDefinition(const Function& func);
+    void addStructType(const Type& type);
+
+    void checkFuncDefinition();
 };
