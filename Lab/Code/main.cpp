@@ -23,7 +23,7 @@ int main(int argc, char** argv){
 	yyparse();
 
 	if(!SYNTAX_ERROR)
-		AST->printTree(0);	
+		AST->parseProgram();
 
 	return 0;
 }

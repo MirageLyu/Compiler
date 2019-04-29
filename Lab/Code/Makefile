@@ -39,7 +39,7 @@ syntax-c: $(YFILE)
 #	do echo "Scanning $$file\n"; ./scanner $$file; echo "\n"; done
 test:
 	@for file in $(shell find ../Test -name "*.cmm");\
-	do echo "Parsing $$file"; ./parser $$file; echo "\n"; done
+	do echo "Parsing $$file"; ./parser $$file; echo ""; done
 clean:
 	rm -f parser scanner lex.yy.c syntax.tab.c syntax.tab.h syntax.output syntax.tab.o
 	rm -f $(OBJS) $(OBJS:.o=.d)

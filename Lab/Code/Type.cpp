@@ -1,4 +1,7 @@
 #include "Type.h"
+#include "ast.h"
+#include "SymbolTable.h"
+
 
 Type::Type(bool int0Rfloat){
     kind = BASIC;
@@ -11,9 +14,10 @@ Type::Type(bool int0Rfloat){
 Type::Type(const Type& type){
     kind = type.kind;
     lineno = type.lineno;
-    basic_type = type.basic_type;
+    if(kind == BASIC)
+        basic_type = type.basic_type;
 
-    if(type.kind == ARRAY){
+    else if(type.kind == ARRAY){
         //recursively copy type
         arr_type.elem = new Type(*(type.arr_type.elem));
         arr_type.size = type.arr_type.size;
@@ -29,9 +33,10 @@ Type::Type(const Type& type){
 Type& Type::operator=(const Type &type){
     kind = type.kind;
     lineno = type.lineno;
-    basic_type = type.basic_type;
+    if(kind == BASIC)
+        basic_type = type.basic_type;
 
-    if(type.kind == ARRAY){
+    else if(type.kind == ARRAY){
         //recursively copy type
         arr_type.elem = new Type(*(type.arr_type.elem));
         arr_type.size = type.arr_type.size;
@@ -105,4 +110,55 @@ string Type::getTypeName() const {
         return type_name;
     }
     return "error_type";
+}
+
+Type::Type(AstNode* specifier){
+    AstNode* child = specifier->firstChild();
+
+    if(child->getAnt() == ANT_TYPE){
+        kind = BASIC;
+        if(child->getSValue() == "int"){
+            basic_type = TYPE_INT;
+        }
+        else if(child->getSValue() == "float"){
+            basic_type = TYPE_FLOAT;
+        }
+    }
+    else{
+        kind = STRUCT;
+        AstNode* structTag = child->firstChild()->nextSibling();
+        AstNode* defList = structTag->nextSibling()->nextSibling();
+
+        if(child->getAttr() == ATTR_STRUCT_DEF){
+            if(structTag->firstChild()->getAnt() == ANT_ID){
+                struct_type.name = structTag->firstChild()->getSValue();
+            }
+            else{
+                struct_type.name = "unknown";
+            }
+            struct_type.fields = defList->parseDefList(false);
+        }
+    }
+    lineno = specifier->getLineNo();
+}
+
+Symbol* Type::hasStructField(const string& name){
+    for(int i=0; i<struct_type.fields.size(); i++){
+        if(struct_type.fields[i].getName() == name){
+            return &struct_type.fields[i];
+        }
+    }
+    return NULL;
+}
+
+Type::Type(AstNode* varDec, const Type& _type){
+    lineno = varDec->getLineNo();
+    varDec = varDec->firstChild();
+    if(varDec->getAnt() == ANT_ID){
+        *this = _type;
+    }
+    else{
+        kind = ARRAY;
+        arr_type.elem = new Type(varDec, _type);
+    }
 }

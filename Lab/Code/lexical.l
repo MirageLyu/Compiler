@@ -168,15 +168,13 @@ ID			{LETTER}({LETTER}|{DIGIT})*
 }
 {WS}		{ /* Do nothing. */ }
 {INT}		{
-	int ival = 0;
-    sscanf(yytext, "%d", &ival);
-    yylval.type_ast = AstNode::createNewAstNode(ANT_INT, yylineno, IVAL, &ival, empty_vec);
+	string sval = string(yytext);
+    yylval.type_ast = AstNode::createNewAstNode(ANT_INT, yylineno, SVAL, &sval, empty_vec);
 	return INT;
 }
 {FLOAT}		{
-    float fval = 0;
-    sscanf(yytext, "%f", &fval);
-    yylval.type_ast = AstNode::createNewAstNode(ANT_FLOAT, yylineno, FVAL, &fval, empty_vec);
+    string sval = string(yytext);
+    yylval.type_ast = AstNode::createNewAstNode(ANT_FLOAT, yylineno, SVAL, &sval, empty_vec);
 	return FLOAT;
 }
 {ID}		{

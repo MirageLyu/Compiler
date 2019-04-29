@@ -1,4 +1,6 @@
 #include "Function.h"
+#include "ast.h"
+#include "Type.h"
 
 vector<Type> Function::getArgsTypeParam() const{
     vector<Type> typesParam;
@@ -10,7 +12,7 @@ vector<Type> Function::getArgsTypeParam() const{
 }
 
 bool Function::operator==(const Function &func) const{
-    if(name != func.getName() || return_type == func.getType() || args.size() != func.args.size() ){
+    if(name != func.getName() || !(return_type == func.getType()) || args.size() != func.args.size() ){
         return false;        
     }
 
@@ -21,4 +23,39 @@ bool Function::operator==(const Function &func) const{
         }
     }
     return true;
+}
+
+Function::Function(AstNode* funDec, const Type& type, bool isDefinition){
+    return_type = type;
+    name = funDec->firstChild()->getSValue();
+    if(isDefinition){
+        def_or_dec = FUNC_DEF;
+    }
+    else{
+        def_or_dec = FUNC_DEC;
+    }
+    if(funDec->getAttr() == ATTR_FUNC_VAR){
+        AstNode* varList = funDec->firstChild()->nextSibling()->nextSibling();
+        args = varList->parseVarList();
+    }
+    lineno = funDec->getLineNo();
+}
+
+string Function::getArgsParamString(){
+    vector<Type> types = getArgsTypeParam();
+    if(types.empty())
+        return "()";
+    else{
+        string paramString = string("(");
+        for(int i=0; i<types.size(); i++){
+            if(i==0){
+                paramString.append(types[i].getTypeName());
+            }
+            else{
+                paramString.append(",").append(types[i].getTypeName());
+            }
+        }
+        paramString.append(")");
+        return paramString;
+    }
 }

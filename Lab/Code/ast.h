@@ -1,5 +1,7 @@
-
+#pragma once
+#include "SymbolTable.h"
 #include "headers.h"
+#include "Type.h"
 
 /* Ast Node Type */
 enum ANT{
@@ -20,6 +22,26 @@ enum ANT{
     Exp, Args,
 
     ANT_ERROR, ANT_EMPTY,
+};
+
+enum Sattr{
+    ATTR_DEC_SPEC, ATTR_STRUCT_SPEC, 
+    ATTR_FUNCDEF_SPEC, ATTR_FUNCDEC_SPEC,
+    
+    ATTR_STRUCT_DEF, ATTR_STRUCT_DEC,
+
+    ATTR_FUNC_VAR, ATTR_FUNC_EMPTY,
+
+    ATTR_EMPTY_DEC, ATTR_ASSIGN_DEC,
+
+    ATTR_EXP, ATTR_COMPST, ATTR_RETURN, 
+    ATTR_IF, ATTR_IFELSE, ATTR_WHILE,
+
+    ATTR_ASSIGN, ATTR_AND, ATTR_OR, ATTR_REL, ATTR_PLUS, 
+    ATTR_MINUS, ATTR_STAR, ATTR_DIV, ATTR_NEST, 
+    ATTR_NEG, ATTR_NOT, 
+    ATTR_FUNC_ARGS_EXP, ATTR_FUNC_EMPTY_EXP, 
+    ATTR_ARRAY, ATTR_STRUCT, ATTR_ID, ATTR_INT, ATTR_FLOAT,
 };
 
 /* ErRor Type */
@@ -45,6 +67,8 @@ private:
 
     VALT valt;
 
+    Sattr attr;
+
     ERT ert;
 
     AstNode* child;
@@ -55,15 +79,27 @@ public:
 
     static void reportSyntaxError(AstNode* ast, int lineno);
 
+    bool right;
+
     AstNode(){
         child = NULL;
         sibling = NULL;
+        right = false;
+    }
+    void setAttr(Sattr _attr){
+        attr = _attr;
+    }
+    Sattr getAttr(){
+        return attr;
     }
     int getLineNo(){
         return lineno;
     }
     void setErt(ERT e){
         this->ert = e;
+    }
+    ANT getAnt(){
+        return ant;
     }
     void setValt(VALT v){
         this->valt = v;
@@ -80,6 +116,9 @@ public:
     void setAnt(ANT a){
         this->ant = a;
     }
+    string getSValue(){
+        return sval;
+    }
     void setLineNo(int no){
         this->lineno = no;
     }
@@ -93,6 +132,18 @@ public:
     AstNode* firstChild();
     AstNode* nextSibling();
     void printTree(int depth);
+
+    void parseProgram();
+    void parseExtDef();
+    Type parseSpecifier();
+    vector<Symbol> parseVarList();
+    void parseCompSt(const Type& type);
+    void parseExtDecList(const Type& type);
+    vector<Symbol> parseDefList(bool);
+    void parseDecList(vector<Symbol>& result, const Type& type, bool notInStruct);
+    Type parseExp();
+    void parseStmt(const Type& type);
+    vector<Type> parseArgs();
 };
 
 

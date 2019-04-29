@@ -1,4 +1,5 @@
 #include "SymbolTable.h"
+#include "ast.h"
 
 Symbol* SymbolTable::getSymbol(const string &name) const {
     map<string, Symbol>::const_iterator iter = symbols.find(name);
@@ -93,5 +94,59 @@ void SymbolTable::addFuncDefinition(const Function &func){
 
 void SymbolTable::addStructType(const Type &type){
     string name = type.getStructName();
+    if(hasStructType(name) || hasSymbolName(name)){
+        string msg = "Duplicated name ";
+        msg.append("\"");
+        msg.append(name);
+        msg.append("\".");
+        reportSemanticError(16, msg, type.getLineno());
+    }
+    else{
+        struct_types.emplace(name, type);
+    }
+}
+
+void SymbolTable::checkFuncDefinition(){
+    map<string, Function>::iterator iter = functions_dec.begin();
+    while(iter != functions_dec.end()){
+        string name = iter->second.getName();
+        if(!hasFuncDefinition(name)){
+            string msg = "Undefined function ";
+            msg.append("\"");
+            msg.append(name);
+            msg.append("\".");
+            reportSemanticError(18, msg, iter->second.getLineno());
+        }
+        iter++;
+    }
+}
+
+Symbol::Symbol(AstNode* parameter){
+    AstNode* specifier = parameter->firstChild(), *varDec = specifier->nextSibling();
+    AstNode* id = varDec;
+    while(id->getAnt() == VarDec)
+        id = id->firstChild();
     
+    name = id->getSValue();
+    lineno = parameter->getLineNo();
+    type = specifier->parseSpecifier();
+}
+
+Symbol::Symbol(AstNode* varDec, const Type& _type){
+    //cout<<_type.getTypeName()<<endl;
+    AstNode* child = varDec->firstChild();
+
+    if(child->getAnt() == ANT_ID){
+        //cout<<_type.getTypeName()<<endl;
+        type = _type;
+    }
+    else{
+        type = Type(varDec, type);
+    }
+    while(child->getAnt() == VarDec){
+        child = child->firstChild();
+    }
+
+    lineno = child->getLineNo();
+    name = child->getSValue();
 }

@@ -48,6 +48,9 @@ public:
     Symbol() = default;
     Symbol(const Symbol &symbol) = default;
     ~Symbol() = default;
+    
+    explicit Symbol(AstNode* parameter);
+    Symbol(AstNode* varDec, const Type& type);
 
     //TODO: Initialize from Ast
 
@@ -68,6 +71,8 @@ private:
     map<string, Function> functions_dec;
     map<string, Type> struct_types;
 public:
+    SymbolTable() = default;
+
     Symbol* getSymbol(const string &name) const ;
     Function* getFuncDefinition(const string &name) const;
     Function* getFuncDeclaration(const string &name) const;
@@ -81,7 +86,7 @@ public:
     void addSymbol(const Symbol &symbol);
     void addFuncDeclaration(const Function& func);
     void addFuncDefinition(const Function& func);
-    void addStructType(const Type& type);
+    void addStructType(const Type& _type);
 
     void checkFuncDefinition();
 };
