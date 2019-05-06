@@ -1,5 +1,6 @@
 #include "Type.h"
 #include "ast.h"
+#include <assert.h>
 #include "SymbolTable.h"
 
 
@@ -57,6 +58,7 @@ bool Type::operator==(const Type& type) const {
         return basic_type == type.basic_type;
     }
     else if(kind == ARRAY){
+        //cout << "Here" << endl;
         return isArrTypeEqual(type);
     }
     else if(kind == STRUCT){
@@ -68,11 +70,11 @@ bool Type::operator==(const Type& type) const {
 bool Type::isArrTypeEqual(const Type& type)const{
     int dimension1 = 0, dimension2 = 0;
     Type* elem1 = arr_type.elem, *elem2 = type.arr_type.elem;
-    while(elem1->kind = ARRAY){
+    while(elem1->kind == ARRAY){
         dimension1++;
         elem1 = elem1->arr_type.elem;
     }
-    while(elem2->kind = ARRAY){
+    while(elem2->kind == ARRAY){
         dimension2++;
         elem2 = elem2->arr_type.elem;
     }
@@ -153,12 +155,18 @@ Symbol* Type::hasStructField(const string& name){
 
 Type::Type(AstNode* varDec, const Type& _type){
     lineno = varDec->getLineNo();
+
+    //cout << "LineNo of VarDec: " << lineno << endl;
+
     varDec = varDec->firstChild();
     if(varDec->getAnt() == ANT_ID){
         *this = _type;
     }
     else{
         kind = ARRAY;
+        arr_type.size = atoi(varDec->nextSibling()->nextSibling()->getSValue().c_str());
         arr_type.elem = new Type(varDec, _type);
     }
+
+    //cout << getTypeName() << "\n" << endl;
 }

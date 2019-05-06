@@ -129,7 +129,20 @@ Symbol::Symbol(AstNode* parameter){
     
     name = id->getSValue();
     lineno = parameter->getLineNo();
-    type = specifier->parseSpecifier();
+    Type _type = specifier->parseSpecifier();
+    
+
+    AstNode* child = varDec->firstChild();
+
+    if(child->getAnt() == ANT_ID){
+        //cout<<_type.getTypeName()<<endl;
+        type = _type;
+    }
+    else{
+        type = Type(varDec, _type);
+    }
+
+    //cout << type.getTypeName() << endl;
 }
 
 Symbol::Symbol(AstNode* varDec, const Type& _type){
@@ -141,7 +154,7 @@ Symbol::Symbol(AstNode* varDec, const Type& _type){
         type = _type;
     }
     else{
-        type = Type(varDec, type);
+        type = Type(varDec, _type);
     }
     while(child->getAnt() == VarDec){
         child = child->firstChild();

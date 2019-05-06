@@ -96,6 +96,7 @@ AstNode* AstNode::createNewAstNode(ANT _ant, int _lineno, VALT _valt, void* _val
 
 void AstNode::parseProgram(){
     assert(ant == Program);
+
     AstNode* extDefList = firstChild(), *extDef = extDefList->firstChild();
     while(extDefList->ant != ANT_EMPTY){
         extDef->parseExtDef();
@@ -106,6 +107,7 @@ void AstNode::parseProgram(){
 }
 
 void AstNode::parseExtDef(){
+
     assert(ant == ExtDef);
     AstNode* specifier = firstChild();
     Type func_type = specifier->parseSpecifier();
@@ -322,10 +324,14 @@ Type AstNode::parseExp(){
         return Type(false);
     }
     else if(attr == ATTR_ID){
+        
+
         right = true;
         AstNode* idnode = firstChild();
 
         assert(idnode->getAnt() == ANT_ID);
+
+        
 
         if(symboltable.hasSymbolName(idnode->getSValue())){
             
@@ -341,35 +347,49 @@ Type AstNode::parseExp(){
         right = false;
         AstNode* idnode = firstChild();
         assert(idnode->getAnt() == ANT_ID);
-           
+        
+
         if(symboltable.hasFuncDeclaration(idnode->getSValue()) || symboltable.hasFuncDefinition(idnode->getSValue())){
             //check arguments' parameter types.
+
+            //cout << idnode->getSValue() << endl;
+
             Function* func = NULL;
             if(symboltable.hasFuncDeclaration(idnode->getSValue())){
                 func = symboltable.getFuncDeclaration(idnode->getSValue());
+                //cout << idnode->getSValue() << endl;
             }
             else{
                 func = symboltable.getFuncDefinition(idnode->getSValue());
+                //cout << idnode->getSValue() << endl;
             }
+
+            //cout << func->getArgsParamString() << endl;
 
             vector<Type> types;
             types = func->getArgsTypeParam();
 
+            //cout << types[0].getTypeName() << endl;
+
             vector<Type> types1;
             if(attr == ATTR_FUNC_ARGS_EXP){
                 types1 = idnode->nextSibling()->nextSibling()->parseArgs();
+                //cout << types1[0].getTypeName() << endl;
             }
             bool matched = true;
             if(types.size() != types1.size())
                 matched = false;
             else{
+                //cout << "Here" << endl;
                 for(int i=0; i<types.size(); i++){
-                    if(!(types[i]== types1[i])){
+                    if(!(types[i] == types1[i])){
                         matched = false;
                         break;
                     }
                 }
             }
+
+
             if(!matched){
                 string msg = string("Function ").append("\"").append(func->getName()).append(func->getArgsParamString()).append("\"");
                 msg.append(" is not applicable for arguments.");
